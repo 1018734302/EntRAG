@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(59, 130, 246, 0.12), transparent 60%),
+    radial-gradient(1000px 500px at 100% 0%, rgba(37, 99, 235, 0.1), transparent 55%),
+    #f5f7fa;
+  color: #1f2937;
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/60 shadow-card;
+  }
+  .btn-brand {
+    @apply bg-gradient-to-r from-brand to-brand-light text-white font-medium
+      rounded-xl shadow-soft transition hover:brightness-105 active:scale-[0.98]
+      disabled:opacity-60 disabled:cursor-not-allowed
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50;
+  }
+  button:focus-visible {
+    @apply outline-none ring-2 ring-brand/50;
+  }
+}

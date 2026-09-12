@@ -1,0 +1,71 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: enterprise_rag
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: rag123456
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # Rerank（Cross-Encoder）重排服务：Ollama 不提供 rerank 端点，因此用 Xinference 承载
+  xinference:
+    image: xprobe/xinference:latest
+    ports:
+      - "9997:9997"
+    volumes:
+      - xinference_data:/root/.xinference
+    environment:
+      XINFERENCE_HOME: /root/.xinference
+      # 国内加速：从 ModelScope 拉取模型，而非 HuggingFace
+      XINFERENCE_MODEL_SRC: modelscope
+    command: xinference-local -H 0.0.0.0 --log-level info
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: enterprise_rag
+      DB_USER: rag
+      DB_PASSWORD: rag123456
+      OLLAMA_BASE_URL: http://ollama:11434
+      RAG_CORS_ALLOWED_ORIGINS: "*"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8088:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
+  pg_data:
+  xinference_data:

@@ -1,0 +1,25 @@
+# 后端
+backend/target/
+backend/.mvn/
+*.class
+
+# 前端
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# 系统
+.DS_Store
+
+# 本地运行日志（启动脚本产生，不入库）
+*.log
+
+# 简历文档目录的依赖
+resume-docx/node_modules/
+
+# IDE / 工具数据
+.codebuddy/
