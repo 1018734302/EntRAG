@@ -107,7 +107,7 @@ cd frontend && npm install && npm run dev   # http://localhost:5173
 | GET | `/api/kb/{kbId}/docs/{docId}/chunks` | 分块预览 |
 | GET | `/api/kb/{kbId}/chat?question=...` | SSE 流式问答（先回 `references` 事件，再逐 token `data`，最后 `done`） |
 
-## 设计亮点（面试可讲）
+## 设计亮点
 
 1. **私有化交付**：Ollama 本地推理 + pgvector 单库部署，数据不出域、零 API 成本，契合企业交付诉求。
 2. **架构权衡**：pgvector 而非 Milvus/Qdrant —— 单库运维成本最低，HNSW 索引支撑十万级向量，足够演示体量。
